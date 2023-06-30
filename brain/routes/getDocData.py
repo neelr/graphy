@@ -1,6 +1,7 @@
 import pinecone
 from dotenv import load_dotenv
 import os
+import logging
 load_dotenv("../.env")
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
@@ -32,6 +33,8 @@ index = pinecone.Index(PINECONE_INDEX)
 def getDocData(id):
 
     doc = index.fetch(ids=[id], namespace="uno")
+
+    logging.info(f"fetched doc: {doc}")
 
     vectors = doc["vectors"]
 
