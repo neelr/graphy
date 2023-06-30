@@ -22,7 +22,9 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 """
     /getDocData
     {
-        "id": string
+        "id": string,
+        "getSimilar": bool # optional (default: true),
+        "k": int # optional (default: 3)
     }
 
     returns: {
@@ -39,8 +41,10 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def getDocData():
     data = request.get_json()
     id = data['id']
+    getSimilar = data['getSimilar'] if 'getSimilar' in data else True
+    k = data['k'] if 'k' in data else 3
 
-    return jsonify(getDocData_route.getDocData(id))
+    return jsonify(getDocData_route.getDocData(id, getSimilar, k))
 
 
 """
