@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broom Options</title>
+    <script src="scripts/options.js" defer></script>
+</head>
+<body>
+    <h1>Domains</h1>
+    <input type="text" id="domain" placeholder="Enter domain name">
+    <button id="add">Add</button>
+    <button id="clear">Clear</button>
+    <ul id="domains">
+
+    </ul>
+
+
+    <h1>Load from history</h1>
+    <button id="load">Load</button>
+    <!-- progress bar-->
+    <div id="progress" style="width: 100px; height: 20px; border: 1px solid black; margin-top: 10px; display: none;">
+        <div id="progress-bar" style="width: 0%; height: 100%; background-color: green;"></div>
+    </div>
+    <div id="status"></div>
+</body>
+</html>
