@@ -6,12 +6,13 @@ import math
 import os
 import hashlib
 import openai
+import sys
+sys.path.append('../helpers')
+import helpers.linguistics as linguistics
 from InstructorEmbedding import INSTRUCTOR
-import tiktoken
 load_dotenv("../.env")
 
 model = INSTRUCTOR('hkunlp/instructor-base')
-encoding = tiktoken.get_encoding("cl100k_base")
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENV = os.getenv("PINECONE_ENV")
@@ -27,17 +28,6 @@ openai.api_key = OPENAI_API_KEY
 
 
 index = pinecone.Index(PINECONE_INDEX)
-
-"""
-    count_tokens(text)
-    text: string
-
-    returns: int
-
-    gets the token count of the text from tiktoken
-"""
-def count_tokens(text) -> int:
-    return len(encoding.encode(text))
 
 """
     createEmbedding(text)
@@ -115,36 +105,6 @@ def get_summary(text) -> dict:
     }
 
 """
-    recursive_summarization(text)
-    text: string
-
-    returns: string
-
-    recursively summarizes the text until it is less than 4096 tokens
-"""
-def recursive_summarization(text):
-    if count_tokens(text) < 3500:
-        return text
-    
-    logging.debug(f"summarizing {text}")
-    CHOP = math.ceil(3000*2.3)
-    def summarize(text):
-        resp = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-0613",
-        messages=[
-            {"role": "user", "content": f"summarize in a couple sentences: {text[:CHOP]}"},
-        ],
-        temperature=0.1,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=["\n"]
-        )
-        return resp["choices"][0]["message"]["content"]
-    return recursive_summarization(summarize(text) + text[CHOP:])
-            
-
-"""
     putDoc(title, ptr, tags, content)
     title: string
     ptr: string
@@ -163,7 +123,7 @@ def recursive_summarization(text):
     puts the document into the brain
 """
 def putDoc(title, ptr, tags, content):
-    content = recursive_summarization(content)
+    content = linguistics.recursive_summarization(content)
 
     # get metadata
     metadata = get_summary(f"{ptr}\n\n {title}\n {content}")

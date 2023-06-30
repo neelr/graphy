@@ -2,8 +2,10 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 import logging, sys
 from flask_cors import CORS, cross_origin
+import helpers.graphData as graphData
 import routes.getDocData as getDocData_route
 import routes.putDoc as putDoc_route
+import routes.recomputeGraph as recomputeGraph_route
 import json
 import os
 load_dotenv()
@@ -15,6 +17,7 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENV = os.getenv("PINECONE_ENV")
 PORT = os.getenv("PORT") or 5000
 
+graphData.init()
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -77,6 +80,21 @@ def putDoc():
     content = data['content']
 
     return jsonify(putDoc_route.putDoc(title, ptr, tags, content))
+
+"""
+    /recomputeGraph
+
+    returns: {
+        "error": string,
+        "message": string
+    }
+
+    recomputes the graph and saves it
+"""
+@app.route('/recomputeGraph', methods=['GET'])
+@cross_origin()
+def recomputeGraph():
+    return jsonify(recomputeGraph_route.recomputeGraph())
 
 @app.route('/')
 @cross_origin()
