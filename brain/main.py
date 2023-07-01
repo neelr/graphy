@@ -86,7 +86,8 @@ def putDoc():
 
     returns: {
         "error": string,
-        "message": string
+        "message": string,
+        "centroids": list
     }
 
     recomputes the graph and saves it
