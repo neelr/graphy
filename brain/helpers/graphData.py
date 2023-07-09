@@ -116,7 +116,6 @@ def getAdjacencyDataClusters(clusters, query):
     global clusterGraph
     nodes = []
     links = []
-    print(clusters)
 
     if clusters != None and len(clusters) != 0:
         nodes, links = getSubGraphData(clusterGraph, clusters)
@@ -135,7 +134,6 @@ def getAdjacencyDataClusters(clusters, query):
 
 def normalize(x, newRange=(0, 1)):  # x is an array. Default range is between zero and one
     x = np.array(x)  # convert input into an array
-    print(x)
     xmin, xmax = np.min(x), np.max(x)  # get max and min from input array
     norm = (x - xmin)/(xmax - xmin)  # scale between zero and one
 

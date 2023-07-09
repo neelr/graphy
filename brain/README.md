@@ -2,6 +2,13 @@
 
 The brain handles the graph fetching, clustering, and AI for the knowledge graph! 
 
+## Run  
+```bash
+# install dependencies
+pipenv install
+gunicorn -w 4 'main:app'
+```         
+
 **Routes:**  
 - `/getDocData` - returns the document data from the brain via the id
 - `/putDoc` - puts the document into the brain

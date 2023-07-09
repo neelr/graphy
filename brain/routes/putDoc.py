@@ -12,7 +12,7 @@ import helpers.linguistics as linguistics
 from InstructorEmbedding import INSTRUCTOR
 load_dotenv("../.env")
 
-# model = INSTRUCTOR('hkunlp/instructor-base')
+model = INSTRUCTOR('hkunlp/instructor-base')
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENV = os.getenv("PINECONE_ENV")
@@ -136,14 +136,7 @@ def putDoc(title, ptr, tags, content):
 
     # create id
     id = hashlib.sha256((title + ptr).encode()).hexdigest()
-
-    print({
-                    "title": title,
-                    "ptr": ptr,
-                    "tags": tags,
-                    "content": summary,
-                    "raw_content": content[:1000]
-                })
+    
     # put into pinecone
     resp = index.upsert(
         vectors=[
