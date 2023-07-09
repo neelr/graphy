@@ -95,7 +95,7 @@ document.getElementById("load").addEventListener("click", async () => {
               const doc = parser.parseFromString(content, "text/html");
               const title = doc.title || "";
 
-              resolve({ title, content, tags: [] });
+              resolve({ title, content, tags: [], ptr: url });
             });
         });
       };
@@ -108,12 +108,19 @@ document.getElementById("load").addEventListener("click", async () => {
         "https://www.google.com",
       ];
 
-      // filter out domains
+      // filter out domains and check if pdf or image
       for (let i = 0; i < data.length; i++) {
         const item = data[i];
         let ignore = false;
         for (let domain of domainsToIgnore) {
-          if (item.url.startsWith(domain)) {
+          if (
+            item.url.startsWith(domain) ||
+            item.url.endsWith(".pdf") ||
+            item.url.endsWith(".png") ||
+            item.url.endsWith(".jpg") ||
+            item.url.endsWith(".jpeg") ||
+            item.url.endsWith(".gif")
+          ) {
             ignore = true;
             break;
           }
@@ -152,7 +159,10 @@ document.getElementById("load").addEventListener("click", async () => {
       progressText.textContent = "";
       progressBar.style.width = "0%";
 
-      send2server.default(contents);
+      send2server.default(contents, (i, len) => {
+        progressText.textContent = `Uploading ${i + 1} of ${len}`;
+        progressBar.style.width = `${((i + 1) / len) * 100}%`;
+      });
     }
   );
 });

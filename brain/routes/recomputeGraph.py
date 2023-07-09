@@ -43,7 +43,7 @@ def get_all_docs():
         top_k=1e4,
         include_values=True,
         include_metadata=True,
-        namespace="uno"
+        namespace="docs"
     )["matches"]
 
     # get all vectors and ids
@@ -254,7 +254,7 @@ def recomputeGraph():
             top_k=5,
             include_values=True,
             include_metadata=True,
-            namespace="uno"
+            namespace="docs"
         )["matches"]
 
         diff_doc = index.query(
@@ -262,7 +262,7 @@ def recomputeGraph():
             top_k=1,
             include_values=True,
             include_metadata=True,
-            namespace="uno"
+            namespace="docs"
         )["matches"]
 
         # prep documents for summary
@@ -270,12 +270,12 @@ def recomputeGraph():
         for doc in docs:
             documents.append({
                 "title": doc["metadata"]["title"],
-                "content": doc["metadata"]["text"]
+                "content": doc["metadata"]["content"]
             })
 
         title, summary = get_cluster_summary(documents, {
             "title": diff_doc[0]["metadata"]["title"],
-            "content": diff_doc[0]["metadata"]["text"]
+            "content": diff_doc[0]["metadata"]["content"]
         })
 
         id = hashlib.sha256((title + str(idx)).encode()).hexdigest()

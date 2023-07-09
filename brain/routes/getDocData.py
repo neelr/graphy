@@ -43,7 +43,7 @@ def getDocData(id, getSimilar=True, k=3):
             "error": "Document not found"
         }
 
-    doc = index.fetch(ids=[id], namespace="uno")
+    doc = index.fetch(ids=[id], namespace="docs")
 
     logging.info(f"fetched docs for id {id}")
 

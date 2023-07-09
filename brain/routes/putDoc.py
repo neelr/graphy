@@ -135,7 +135,7 @@ def putDoc(title, ptr, tags, content):
     embedding = createEmbedding(summary)
 
     # create id
-    id = hashlib.sha256((title + ptr).encode()).hexdigest()
+    id = hashlib.sha256((ptr).encode()).hexdigest()
     
     # put into pinecone
     resp = index.upsert(

@@ -93,7 +93,7 @@ def getAdjacencyDataNodes(clusters, query):
     # check content for query
     if query != "" and query != None:
         nodes = [i for i in nodes if query.lower() in i["metadata"]
-                 ["text"].lower()]
+                 ["content"].lower()]
 
     nodes, links = getSubGraphData(graph, [i["id"] for i in nodes])
 

@@ -5,7 +5,8 @@
   const websiteList = [];
   const website = {
     title: document.title,
-    content: document.body.innerText,
+    content: document.body.innerText.replaceAll("\n\n", ""),
+    ptr: window.location.href,
     tags: [],
   };
   websiteList.push(website);
