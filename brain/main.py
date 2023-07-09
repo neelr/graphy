@@ -6,6 +6,8 @@ import helpers.graphData as graphData
 import routes.getDocData as getDocData_route
 import routes.putDoc as putDoc_route
 import routes.recomputeGraph as recomputeGraph_route
+import routes.getAdjacencyData as getAdjacencyData_route
+import routes.query as query_route
 import json
 import os
 load_dotenv()
@@ -96,6 +98,53 @@ def putDoc():
 @cross_origin()
 def recomputeGraph():
     return jsonify(recomputeGraph_route.recomputeGraph())
+
+"""
+    /getAdjacencyData
+    {
+        "resolution": "node" | "cluster",
+        "clusters": list # optional (default: all clusters),
+        "query": string # optional (default: all nodes)
+    }
+
+    returns: {
+        "error": string,
+        "nodes": list,
+        "links": list,
+    }
+"""
+@app.route('/getAdjacencyData', methods=['POST'])
+@cross_origin()
+def getAdjacencyData():
+    data = request.get_json()
+    resolution = data['resolution']
+    clusters = data['clusters'] if 'clusters' in data else None
+    query = data['query'] if 'query' in data else None
+    nodes = data['nodes'] if 'nodes' in data else None
+
+    return jsonify(getAdjacencyData_route.getAdjacencyData(resolution, clusters, nodes, query))
+
+"""
+    /query
+    {
+        "filter": {
+            // PINECONE FILTERS
+        }
+    }
+
+    returns: {
+        "error": string,
+        "nodes": list,
+        "links": list,
+    }
+"""
+@app.route('/query', methods=['POST'])
+@cross_origin()
+def query():
+    data = request.get_json()
+    qs = data['qs']
+
+    return jsonify(query_route.query(qs))
 
 @app.route('/')
 @cross_origin()

@@ -12,7 +12,7 @@ import helpers.linguistics as linguistics
 from InstructorEmbedding import INSTRUCTOR
 load_dotenv("../.env")
 
-model = INSTRUCTOR('hkunlp/instructor-base')
+# model = INSTRUCTOR('hkunlp/instructor-base')
 
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_ENV = os.getenv("PINECONE_ENV")
