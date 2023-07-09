@@ -128,7 +128,7 @@ def putDoc(title, ptr, tags, content):
     # get metadata
     metadata = get_summary(f"{ptr}\n\n {title}\n {content}")
     summary = metadata["summary"]
-    tags = metadata["tags"] + tags
+    tags = metadata["tags"] + tags if metadata["tags"] is not None else tags
     title = metadata["title"] if metadata["title"] is not None and metadata["title"] != "" else title
 
     # create embedding

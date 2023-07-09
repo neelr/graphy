@@ -205,7 +205,7 @@ def embeddings_to_graph(embeddings, ids, metadata, nx_graph):
     
     # decide cutoff similarity by Q1 of similarities
     similarities.sort()
-    CUTOFF = np.quantile(similarities, 0.1)
+    CUTOFF = np.quantile(similarities, 0.25)
 
     # remove edges below cutoff
     selected_edges = [(u,v) for u,v,attr in nx_graph.edges(data=True) if attr['weight'] > CUTOFF]
@@ -251,15 +251,7 @@ def recomputeGraph():
         # get top 5 docs from cluster and 1 negative control doc for summary
         docs = index.query(
             vector=centroid.tolist(),
-            top_k=5,
-            include_values=True,
-            include_metadata=True,
-            namespace="docs"
-        )["matches"]
-
-        diff_doc = index.query(
-            vector=(-centroid).tolist(),
-            top_k=1,
+            top_k=min(5, len(label_ids[idx])),
             include_values=True,
             include_metadata=True,
             namespace="docs"
@@ -272,11 +264,23 @@ def recomputeGraph():
                 "title": doc["metadata"]["title"],
                 "content": doc["metadata"]["content"]
             })
+            
+        title, summary = ("No documents", "No documents")
+        if len(documents) != 1:
+            diff_doc = index.query(
+                vector=(-centroid).tolist(),
+                top_k=1,
+                include_values=True,
+                include_metadata=True,
+                namespace="docs"
+            )["matches"]
 
-        title, summary = get_cluster_summary(documents, {
-            "title": diff_doc[0]["metadata"]["title"],
-            "content": diff_doc[0]["metadata"]["content"]
-        })
+            title, summary = get_cluster_summary(documents, {
+                "title": diff_doc[0]["metadata"]["title"],
+                "content": diff_doc[0]["metadata"]["content"]
+            })
+        else:
+            title, summary = documents[0]["title"], documents[0]["content"]
 
         id = hashlib.sha256((title + str(idx)).encode()).hexdigest()
         centroid_features.append((

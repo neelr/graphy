@@ -62,7 +62,7 @@ document.getElementById("load").addEventListener("click", async () => {
   progress.style.display = "block";
 
   chrome.history.search(
-    { text: "", maxResults: 1e5, startTime: 0 },
+    { text: "", maxResults: 1e9, startTime: 0 },
     async (data) => {
       // get page contents
       const getContents = (url) => {
@@ -76,7 +76,7 @@ document.getElementById("load").addEventListener("click", async () => {
           });
         };
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           fetch(url, {
             mode: "cors",
             // try to find cached page
@@ -94,8 +94,11 @@ document.getElementById("load").addEventListener("click", async () => {
               const parser = new DOMParser();
               const doc = parser.parseFromString(content, "text/html");
               const title = doc.title || "";
+              const contentElement = doc.body.innerText.replaceAll("\n\n", "");
 
-              resolve({ title, content, tags: [], ptr: url });
+              resolve({ title, content: contentElement , tags: [], ptr: url });
+            }).catch((e) => {
+              reject(e);
             });
         });
       };
@@ -131,6 +134,13 @@ document.getElementById("load").addEventListener("click", async () => {
         }
       }
 
+      data = data.filter(
+        (item) =>
+          item.url.startsWith("https://arxiv.org/abs/") ||
+          item.url.includes("lesswrong") ||
+          item.url.includes("nature.com")
+      );
+
       let contents = [];
       // get contents
       for (let i = 0; i < data.length; i++) {
@@ -139,11 +149,14 @@ document.getElementById("load").addEventListener("click", async () => {
         // update progress bar
         progressText.textContent = item.url;
 
-        const content = await getContents(item.url);
+        try {
+          const content = await getContents(item.url);
+          contents.push(content);
+        } catch (e) {
+          console.log(e);
+        }
 
         progressBar.style.width = `${(i / data.length) * 100}%`;
-
-        contents.push(content);
       }
 
       // delete all with contents == ""
